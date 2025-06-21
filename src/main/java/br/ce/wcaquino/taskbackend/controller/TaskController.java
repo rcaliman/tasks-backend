@@ -30,7 +30,7 @@ public class TaskController {
 	
 	@PostMapping
 	public ResponseEntity<Task> save(@RequestBody Task todo) throws ValidationException {
-		if(todo.getTask() == null || todo.getTask() == "") {
+		if(todo.getTask() == null || "".equals(todo.getTask())) {
 			throw new ValidationException("Fill the task description");
 		}
 		if(todo.getDueDate() == null) {
@@ -40,6 +40,6 @@ public class TaskController {
 			throw new ValidationException("Due date must not be in past");
 		}
 		Task saved = todoRepo.save(todo);
-		return new ResponseEntity<Task>(saved, HttpStatus.CREATED);
+		return new ResponseEntity<>(saved, HttpStatus.CREATED);
 	}
 }
