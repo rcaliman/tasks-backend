@@ -50,5 +50,17 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy Frontend') {
+            steps {
+                dir('frontend') {
+                    git branch: 'main', credentialsId: 'github_credentials', url: 'https://github.com/rcaliman/tasks-frontend'
+                    sh 'mvn clean package'
+                    /* groovylint-disable-next-line LineLength */
+                    deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'tomcat_credentials', path: '', url: 'http://localhost:8001')], contextPath: 'tasks', war: 'target/*.war'
+                }
+                    
+            }
+        }
     }
 }
