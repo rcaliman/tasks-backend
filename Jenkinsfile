@@ -66,7 +66,7 @@ pipeline {
         stage('Funcional Test') {
             steps {
                 dir('funcional-test') {
-                    git branch: 'main', credentialsId: 'github_credentials', url: 'hhttps://github.com/rcaliman/tasks-funcional-tests'
+                    git branch: 'main', credentialsId: 'github_credentials', url: 'https://github.com/rcaliman/tasks-funcional-tests'
                     sh 'mvn test'
                 }
             }
