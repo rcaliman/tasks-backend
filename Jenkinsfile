@@ -1,17 +1,21 @@
 pipeline {
     agent any
+
     stages {
-        stage ('Build Backend') {
+
+        stage('Build Backend') {
             steps {
                 sh 'mvn clean package -DskipTests=true'
             }
         }
-        stage ('Unit Tests') {
+
+        stage('Unit Tests') {
             steps {
                 sh 'mvn test'
             }
         }
-        stage ('Sonar Analysis') {
+
+        stage('Sonar Analysis') {
             environment {
                 scannerHome = tool 'sonarqube_scanner'
             }
@@ -21,6 +25,7 @@ pipeline {
                 }
             }
         }
+
         stage('Quality Gate') {
             steps {
                 sleep(5)
@@ -29,10 +34,12 @@ pipeline {
                 }
             }
         }
+
         stage('Deploy Backend') {
             steps {
-                deploy adapters: [tomcat9(credentialsId: 'tomcat_credentials', path: '', url: 'http://localhost:8001/')], contextPath: 'tasks-backend', war: 'target/tasks-backend.war'
+                deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'tomcat_credentials', path: '', url: 'http://localhost:8001')], contextPath: 'tasks-backend', war: 'target/*.war'
             }
         }
+
     }
 }
