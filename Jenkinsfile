@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     stages {
-
         stage('Build Backend') {
             steps {
                 sh 'mvn clean package -DskipTests=true'
@@ -21,6 +20,7 @@ pipeline {
             }
             steps {
                 withSonarQubeEnv('sonarqube_installations') {
+                    /* groovylint-disable-next-line LineLength */
                     sh "${scannerHome}/bin/sonar-scanner -e -Dsonar.projectKey=DeployBack -Dsonar.host.url=http://localhost:9000 -Dsonar.login=sqp_acc20052e372e36d6fcd72bbf1b65595bacffa28 -Dsonar.java.binaries=target -Dsonar.coverage.exclusions=**/.mvn/**,**/src/test/**,**/model/**,**Application.java"
                 }
             }
@@ -37,9 +37,16 @@ pipeline {
 
         stage('Deploy Backend') {
             steps {
+                /* groovylint-disable-next-line LineLength */
                 deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'tomcat_credentials', path: '', url: 'http://localhost:8001')], contextPath: 'tasks-backend', war: 'target/*.war'
             }
         }
 
+        stage('API Test') {
+            steps {
+                git branch: 'main', credentialsId: 'github_credentials', url: 'https://github.com/rcaliman/tasks-api-test'
+                sh 'mvn test'
+            }
+        }
     }
 }
