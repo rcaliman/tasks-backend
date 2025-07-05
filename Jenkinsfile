@@ -44,8 +44,10 @@ pipeline {
 
         stage('API Test') {
             steps {
-                git branch: 'main', credentialsId: 'github_credentials', url: 'https://github.com/rcaliman/tasks-api-test'
-                sh 'mvn test'
+                dir('api-test') {
+                    git branch: 'main', credentialsId: 'github_credentials', url: 'https://github.com/rcaliman/tasks-api-test'
+                    sh 'mvn test'
+                }
             }
         }
     }
